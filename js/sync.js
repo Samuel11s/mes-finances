@@ -21,19 +21,20 @@ function setSync(status, error = '') {
   updateSyncPill();
 }
 
-const PILL = {
-  off: ['cloud-off', 'Synchro désactivée'],
-  ok: ['circle-check', 'Synchronisé'],
-  pending: ['cloud', 'En attente…'],
-  syncing: ['refresh-cw', 'Synchronisation…'],
-  offline: ['wifi-off', 'Hors ligne'],
-  error: ['triangle-alert', 'Erreur de synchro'],
-};
+const PILL = () => ({
+  off: ['cloud-off', t('Synchro désactivée')],
+  ok: ['circle-check', t('Synchronisé')],
+  pending: ['cloud', t('En attente…')],
+  syncing: ['refresh-cw', t('Synchronisation…')],
+  offline: ['wifi-off', t('Hors ligne')],
+  error: ['triangle-alert', t('Erreur de synchro')],
+});
 function updateSyncPill() {
-  const [ic, label] = PILL[syncState.status] || PILL.off;
+  const pills = PILL();
+  const [ic, label] = pills[syncState.status] || pills.off;
   for (const el of $$('.sync-pill')) {
     el.className = `sync-pill s-${syncState.status}`;
-    el.title = syncState.error || (syncCfg.lastSync ? `Dernière synchro : ${new Date(syncCfg.lastSync).toLocaleString('fr-FR')}` : label);
+    el.title = syncState.error || (syncCfg.lastSync ? t('Dernière synchro : {d}', { d: dateTime(syncCfg.lastSync) }) : label);
     el.innerHTML = `${icon(ic, syncState.status === 'syncing' ? 'spin' : '')}<span>${label}</span>`;
   }
 }
@@ -47,14 +48,15 @@ async function callScript(action, extra = {}, cfg = syncCfg) {
       method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify({ key: cfg.key, action, ...extra }), signal: ctrl.signal,
     });
-    if (!res.ok) throw new Error(`Le script a répondu ${res.status}`);
+    if (!res.ok) throw new Error(t('Le script a répondu {n}', { n: res.status }));
     let j;
-    try { j = await res.json(); } catch { throw new Error("Réponse inattendue : vérifie l'adresse et que l'accès est réglé sur « Tout le monde »."); }
-    if (!j.ok) throw new Error(j.error || 'Erreur du script');
+    try { j = await res.json(); } catch { throw new Error(t("Réponse inattendue : vérifie l'adresse et que l'accès est réglé sur « Tout le monde ».")); }
+    // The script's error messages are in French: translate them here.
+    if (!j.ok) throw new Error(t(j.error || 'Erreur du script'));
     return j;
   } catch (e) {
-    if (e.name === 'AbortError') throw new Error('Le script met trop de temps à répondre.');
-    if (e instanceof TypeError) throw new Error("Impossible de joindre le script (connexion internet ou adresse incorrecte).");
+    if (e.name === 'AbortError') throw new Error(t('Le script met trop de temps à répondre.'));
+    if (e instanceof TypeError) throw new Error(t('Impossible de joindre le script (connexion internet ou adresse incorrecte).'));
     throw e;
   } finally { clearTimeout(timer); }
 }
@@ -79,7 +81,7 @@ function onLocalChange() {
 async function syncNow(manual = false) {
   if (!syncOn()) return;
   if (syncState.busy) { syncState.again = true; return; }
-  if (!navigator.onLine) { setSync('offline'); if (manual) toast('Pas de connexion : la synchro se fera au retour du réseau'); return; }
+  if (!navigator.onLine) { setSync('offline'); if (manual) toast(t('Pas de connexion : la synchro se fera au retour du réseau')); return; }
   syncState.busy = true; syncState.again = false;
   setSync('syncing');
   const rev = localRev;
@@ -92,7 +94,7 @@ async function syncNow(manual = false) {
     if (localRev === rev) syncCfg.dirty = false;
     syncCfg.lastSync = Date.now(); saveSyncCfg();
     setSync(syncCfg.dirty ? 'pending' : 'ok');
-    if (manual) toast('Synchronisé');
+    if (manual) toast(t('Synchronisé'));
     if (syncCfg.dirty || syncState.again) setTimeout(() => syncNow(), 1500);
   } catch (e) {
     setSync('error', e.message);
@@ -109,7 +111,7 @@ function genKey() {
 
 async function scriptText() {
   const res = await fetch('google-apps-script.gs', { cache: 'no-cache' });
-  if (!res.ok) throw new Error('Script introuvable');
+  if (!res.ok) throw new Error('404');
   return (await res.text()).replace('PASTE_YOUR_KEY_HERE', syncCfg.key);
 }
 
@@ -122,17 +124,17 @@ async function copyScript() {
   if (!syncCfg.key) { syncCfg.key = genKey(); saveSyncCfg(); }
   let text;
   try { text = await scriptText(); }
-  catch { return toast("Impossible de lire le script : ouvre l'app depuis son adresse web, pas depuis le fichier."); }
-  if (!(await copyText(text, 'Script copié avec ta clé — colle-le dans Apps Script'))) {
-    openModal('Copie le script', `<p class="hint">Sélectionne tout le texte (Ctrl+A) puis copie-le (Ctrl+C).</p><textarea rows="14" readonly style="font-family:monospace;font-size:.75rem">${esc(text)}</textarea>`, null);
+  catch { return toast(t("Impossible de lire le script : ouvre l'app depuis son adresse web, pas depuis le fichier.")); }
+  if (!(await copyText(text, t('Script copié avec ta clé — colle-le dans Apps Script')))) {
+    openModal(t('Copie le script'), `<p class="hint">${t('Sélectionne tout le texte (Ctrl+A) puis copie-le (Ctrl+C).')}</p><textarea rows="14" readonly style="font-family:monospace;font-size:.75rem">${esc(text)}</textarea>`, null);
   }
 }
 
 // First connection of a device: avoid duplicating the default envelopes.
 async function connectSync(url, key) {
   url = url.trim(); key = key.trim();
-  if (!/^https:\/\/script\.google(usercontent)?\.com\//.test(url)) return toast("L'adresse doit commencer par https://script.google.com/");
-  if (key.length < 16) return toast('Clé secrète invalide');
+  if (!/^https:\/\/script\.google(usercontent)?\.com\//.test(url)) return toast(t("L'adresse doit commencer par https://script.google.com/"));
+  if (key.length < 16) return toast(t('Clé secrète invalide'));
   const cfg = { url, key };
   setSync('syncing');
   try {
@@ -147,16 +149,16 @@ async function connectSync(url, key) {
         await callScript('push', { data: sharedData(S) }, cfg);
         Object.assign(syncCfg, cfg, { linked: true, email: ping.email, lastSync: Date.now(), dirty: false });
         saveSyncCfg(); setSync('ok'); render();
-        toast(`Synchronisation activée (${ping.email || 'Google Drive'})`);
+        toast(t('Synchronisation activée ({x})', { x: ping.email || 'Google Drive' }));
       } catch (e) { setSync('off'); toast(e.message); }
     };
     if (remoteEmpty) return finish('local');
     if (localEmpty) return finish('adopt');
     setSync('off');
-    openModal('Deux versions trouvées', `
-      <p>Cet appareil contient <b>${S.tx.length}</b> opération(s) et ton Google Drive en contient <b>${remote.tx.length}</b>.</p>
-      <p class="hint"><b>Fusionner</b> garde tout des deux côtés. <b>Utiliser le Drive</b> remplace les données de cet appareil par celles du Drive.</p>`,
-    () => () => finish('merge'), { submitLabel: 'Fusionner', extra: '<button type="button" class="btn" data-adopt>Utiliser le Drive</button>' });
+    openModal(t('Deux versions trouvées'), `
+      <p>${t('Cet appareil contient {a} opération(s) et ton Google Drive en contient {b}.', { a: `<b>${S.tx.length}</b>`, b: `<b>${remote.tx.length}</b>` })}</p>
+      <p class="hint">${t('<b>Fusionner</b> garde tout des deux côtés. <b>Utiliser le Drive</b> remplace les données de cet appareil par celles du Drive.')}</p>`,
+    () => () => finish('merge'), { submitLabel: t('Fusionner'), extra: `<button type="button" class="btn" data-adopt>${t('Utiliser le Drive')}</button>` });
     $('[data-adopt]').onclick = () => { $('#modal').close(); finish('adopt'); };
   } catch (e) {
     setSync('off');
@@ -165,55 +167,54 @@ async function connectSync(url, key) {
 }
 
 function disconnectSync() {
-  if (!confirm('Désactiver la synchronisation sur cet appareil ? Tes données restent ici et sur ton Drive.')) return;
+  if (!confirm(t('Désactiver la synchronisation sur cet appareil ? Tes données restent ici et sur ton Drive.'))) return;
   syncCfg = {}; saveSyncCfg(); setSync('off'); render();
 }
 
 function showConnectionCode() {
   const code = `${syncCfg.url}|${syncCfg.key}`;
-  openModal('Code pour un autre appareil', `
-    <p class="hint">Sur ton autre appareil : ouvre l'app → Réglages → Synchronisation → « J'ai déjà configuré » et colle ce code.
-    <b>Ne le partage avec personne</b> : il donne accès à tes données.</p>
+  openModal(t('Code pour un autre appareil'), `
+    <p class="hint">${t("Sur ton autre appareil : ouvre l'app → Réglages → Synchronisation → « J'ai déjà configuré » et colle ce code. <b>Ne le partage avec personne</b> : il donne accès à tes données.")}</p>
     <textarea rows="4" readonly style="font-family:monospace;font-size:.75rem">${esc(code)}</textarea>`, null,
-  { extra: '<button type="button" class="btn primary" data-copy-code>Copier</button>' });
-  $('[data-copy-code]').onclick = () => copyText(code, 'Code copié');
+  { extra: `<button type="button" class="btn primary" data-copy-code>${t('Copier')}</button>` });
+  $('[data-copy-code]').onclick = () => copyText(code, t('Code copié'));
 }
 
 async function emailBackup() {
-  try { const r = await callScript('email'); toast(`Sauvegarde envoyée à ${r.email || 'ton adresse Gmail'}`); }
+  try { const r = await callScript('email'); toast(t('Sauvegarde envoyée à {x}', { x: r.email || 'Gmail' })); }
   catch (e) { toast(e.message); }
 }
 
 function syncSection() {
   if (syncOn()) {
-    return `<div class="card"><h2>${icon('cloud')} Synchronisation</h2>
-      <p class="muted">Connecté au Google Drive de <b>${esc(syncCfg.email || '?')}</b>.<br>
-      Dernière synchro : <b>${syncCfg.lastSync ? new Date(syncCfg.lastSync).toLocaleString('fr-FR') : 'jamais'}</b>
+    return `<div class="card"><h2>${icon('cloud')} ${t('Synchronisation')}</h2>
+      <p class="muted">${t('Connecté au Google Drive de {x}.', { x: `<b>${esc(syncCfg.email || '?')}</b>` })}<br>
+      ${t('Dernière synchro :')} <b>${syncCfg.lastSync ? dateTime(syncCfg.lastSync) : t('jamais')}</b>
       ${syncState.error ? `<br><span class="neg">${esc(syncState.error)}</span>` : ''}</p>
       <div class="row-actions">
-        <button class="btn primary" data-act="sync-now">${icon('refresh-cw')} Synchroniser</button>
-        <button class="btn" data-act="sync-email">${icon('mail')} M'envoyer la sauvegarde</button>
-        <button class="btn" data-act="sync-code">${icon('smartphone')} Ajouter un appareil</button>
-        <button class="btn ghost danger" data-act="sync-off">Désactiver</button>
+        <button class="btn primary" data-act="sync-now">${icon('refresh-cw')} ${t('Synchroniser')}</button>
+        <button class="btn" data-act="sync-email">${icon('mail')} ${t("M'envoyer la sauvegarde")}</button>
+        <button class="btn" data-act="sync-code">${icon('smartphone')} ${t('Ajouter un appareil')}</button>
+        <button class="btn ghost danger" data-act="sync-off">${t('Désactiver')}</button>
       </div></div>`;
   }
-  return `<div class="card"><h2>${icon('cloud')} Synchronisation & sauvegardes Google</h2>
-    <p class="muted">Synchronise ton téléphone et ton PC et reçois des sauvegardes automatiques (Drive + e-mail), grâce à un petit script gratuit dans <b>ton</b> compte Google.
-    <a href="#guide" data-act="go" data-view="guide">Voir le guide pas à pas</a>.</p>
+  return `<div class="card"><h2>${icon('cloud')} ${t('Synchronisation & sauvegardes Google')}</h2>
+    <p class="muted">${t('Synchronise ton téléphone et ton PC et reçois des sauvegardes automatiques (Drive + e-mail), grâce à un petit script gratuit dans <b>ton</b> compte Google.')}
+    <a href="#guide" data-act="go" data-view="guide">${t('Voir le guide pas à pas')}</a>.</p>
     <div class="seg" style="margin-top:10px">
-      <button type="button" class="${syncCfg.mode !== 'join' ? 'on' : ''}" data-act="sync-mode" data-mode="new">Premier appareil</button>
-      <button type="button" class="${syncCfg.mode === 'join' ? 'on' : ''}" data-act="sync-mode" data-mode="join">J'ai déjà configuré</button>
+      <button type="button" class="${syncCfg.mode !== 'join' ? 'on' : ''}" data-act="sync-mode" data-mode="new">${t('Premier appareil')}</button>
+      <button type="button" class="${syncCfg.mode === 'join' ? 'on' : ''}" data-act="sync-mode" data-mode="join">${t("J'ai déjà configuré")}</button>
     </div>
     ${syncCfg.mode === 'join' ? `
-      ${field('Code de connexion', '<textarea id="sync-code" rows="3" placeholder="https://script.google.com/macros/s/…|clé"></textarea>', 'Sur ton premier appareil : Réglages → Ajouter un appareil.')}
-      <button class="btn primary" data-act="sync-join">Connecter</button>` : `
+      ${field(t('Code de connexion'), `<textarea id="sync-code" rows="3" placeholder="https://script.google.com/macros/s/…|${t('clé')}"></textarea>`, t('Sur ton premier appareil : Réglages → Ajouter un appareil.'))}
+      <button class="btn primary" data-act="sync-join">${t('Connecter')}</button>` : `
       <ol class="steps">
-        <li><button class="btn sm" data-act="sync-script">${icon('copy')} Copier mon script</button><br><small class="muted">Le script contient ta clé secrète, générée sur cet appareil.</small></li>
-        <li>Va sur <a href="https://script.google.com/home/projects/create" target="_blank" rel="noopener">script.google.com ${icon('external-link')}</a>, efface tout et colle le script. Enregistre.</li>
-        <li>Choisis la fonction <code>setup</code> et clique sur <b>Exécuter</b>. Autorise l'accès (Paramètres avancés → Accéder au projet).</li>
-        <li><b>Déployer → Nouveau déploiement</b> → type <b>Application Web</b>, exécuter en tant que <b>Moi</b>, accès <b>Tout le monde</b>. Copie l'URL.</li>
-        <li>${field("Colle l'URL de l'application Web", '<input id="sync-url" placeholder="https://script.google.com/macros/s/…/exec">')}
-          <button class="btn primary" data-act="sync-connect">Connecter</button></li>
+        <li><button class="btn sm" data-act="sync-script">${icon('copy')} ${t('Copier mon script')}</button><br><small class="muted">${t('Le script contient ta clé secrète, générée sur cet appareil.')}</small></li>
+        <li>${t('Va sur {link}, efface tout et colle le script. Enregistre.', { link: `<a href="https://script.google.com/home/projects/create" target="_blank" rel="noopener">script.google.com ${icon('external-link')}</a>` })}</li>
+        <li>${t("Choisis la fonction <code>setup</code> et clique sur <b>Exécuter</b>. Autorise l'accès (Paramètres avancés → Accéder au projet).")}</li>
+        <li>${t("<b>Déployer → Nouveau déploiement</b> → type <b>Application Web</b>, exécuter en tant que <b>Moi</b>, accès <b>Tout le monde</b>. Copie l'URL.")}</li>
+        <li>${field(t("Colle l'URL de l'application Web"), '<input id="sync-url" placeholder="https://script.google.com/macros/s/…/exec">')}
+          <button class="btn primary" data-act="sync-connect">${t('Connecter')}</button></li>
       </ol>`}
   </div>`;
 }
@@ -225,11 +226,11 @@ function handleSyncAction(act, el) {
     case 'sync-mode': syncCfg.mode = el.dataset.mode; saveSyncCfg(); render(); return true;
     case 'sync-script': copyScript(); return true;
     case 'sync-connect':
-      if (!syncCfg.key) { toast("Copie d'abord ton script (étape 1)"); return true; }
+      if (!syncCfg.key) { toast(t("Copie d'abord ton script (étape 1)")); return true; }
       connectSync($('#sync-url').value, syncCfg.key); return true;
     case 'sync-join': {
       const [url, key] = $('#sync-code').value.trim().split('|');
-      if (!url || !key) { toast('Code incomplet'); return true; }
+      if (!url || !key) { toast(t('Code incomplet')); return true; }
       connectSync(url, key); return true;
     }
     case 'sync-code': showConnectionCode(); return true;
