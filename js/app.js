@@ -684,7 +684,7 @@ function barsChart(hist, { link = false } = {}) {
   const W = 640, H = 260, B = 34, T = 10;
   const max = Math.max(1, ...hist.flatMap(h => [h.inc, h.exp]));
   const gw = W / hist.length, bw = Math.min(30, gw * 0.3), ph = H - T - B;
-  let s = `<svg viewBox="0 0 ${W} ${H}" class="chart" role="img" aria-label="Revenus et dépenses par mois">`;
+  let s = `<svg viewBox="0 0 ${W} ${H}" class="chart ${hist.length > 8 ? 'dense' : ''}" role="img" aria-label="Revenus et dépenses par mois">`;
   for (let i = 0; i <= 3; i++) { const y = T + ph * i / 3; s += `<line x1="0" x2="${W}" y1="${y}" y2="${y}" class="grid-line"/>`; }
   hist.forEach((h, i) => {
     const cx = gw * i + gw / 2;
@@ -699,7 +699,7 @@ function barsChart(hist, { link = false } = {}) {
 }
 
 function lineChart(points) {
-  const W = 640, H = 220, B = 30, T = 16, L = 6;
+  const W = 640, H = 220, B = 30, T = 16, L = 26;
   const vals = points.map(p => p.v);
   const max = Math.max(...vals, 0), min = Math.min(...vals, 0);
   const span = max - min || 1;
@@ -983,13 +983,11 @@ function viewReports() {
       ${envRows.map(({ e, v }) => { const avg = Math.round(v / nbMonths); return `<tr><td><span class="cell-name">${tile(e.icon, e.color, 'xs')}${esc(e.name)}</span></td><td class="num">${money(v)}</td><td class="num">${money(avg)}</td><td class="num ${e.target && avg > e.target ? 'neg' : ''}">${e.target ? money(e.target) : '—'}</td></tr>`; }).join('') || '<tr><td colspan="4" class="muted">Aucune dépense.</td></tr>'}
       </tbody></table></div></div>
   </div>
-  <div class="grid cols-2">
-    <div class="card"><h2>Mois par mois</h2>
+  <div class="card" style="margin-bottom:14px"><h2>Mois par mois</h2>
       <div class="table-wrap"><table class="table"><thead><tr><th>Mois</th><th>Revenus</th><th>Dépenses</th><th>Solde</th><th>Cumul</th></tr></thead><tbody>
       ${rows.filter(r => r.inc || r.exp).map(r => { const b = r.inc - r.exp; cumul += b; return `<tr class="clickable" data-act="open-month" data-m="${r.m}"><td>${monthLabel(r.m)}</td><td class="num pos">${money(r.inc)}</td><td class="num neg">${money(r.exp)}</td><td class="num ${b < 0 ? 'neg' : ''}">${signed(b)}</td><td class="num">${signed(cumul)}</td></tr>`; }).join('')}
       </tbody></table></div></div>
-    <div class="card"><h2>Plus grosses dépenses</h2>${topExp.length ? topExp.map(txRow).join('') : '<p class="muted">Aucune dépense.</p>'}</div>
-  </div>`;
+  <div class="card"><h2>Plus grosses dépenses</h2>${topExp.length ? topExp.map(txRow).join('') : '<p class="muted">Aucune dépense.</p>'}</div>`;
 }
 
 /* ---------- Guide ---------- */

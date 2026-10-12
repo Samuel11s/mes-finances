@@ -374,3 +374,4 @@ a .i { width: 13px; height: 13px; }
   .cols-2 { grid-template-columns: 1fr 1fr; }
   * { animation: none !important; }
 }
+.chart.dense .axis { font-size: 15px; }
