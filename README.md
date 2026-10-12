@@ -6,10 +6,11 @@ A web app to track every cent when income is irregular (Upwork freelancing, trad
 - Data stays **in the device's browser** (localStorage). With the optional sync, it also goes to **your own Google Drive**, never to a third party.
 - Installable on phones (PWA) and **usable offline**.
 
-The **full user guide** is inside the app (**Guide** menu). The app's interface is in French.
+The **full user guide** is inside the app (**Guide** menu).
 
 ## Features
 
+- **French and English**: the language is detected from the device and can be changed in Settings. Translation is built in (`js/i18n.js`), so it works offline. What the user types is never translated; only default names that were never edited ("Loyer" ⇄ "Rent") follow the language.
 - **Envelopes**: every income is assigned ("Needs first" mode, ideal for irregular income), every expense comes out of an envelope.
 - **Accounts**: Upwork, trading, cash, mobile money… with transfers, fees and "Adjust" to spot untracked money.
 - **Goals**: purchases funded in priority order (monitor, headset…).
@@ -40,7 +41,7 @@ Sharing the address is safe: every visitor gets their own empty app, in their ow
 
 ## Updating the app
 
-After a change, bump the cache version in `sw.js` (`mes-finances-v2` → `v3`) so installed devices get the new version.
+After a change, bump the cache version in `sw.js` (`mes-finances-v3` → `v4`) so installed devices get the new version.
 
 ## Files
 
@@ -50,6 +51,8 @@ After a change, bump the cache version in `sw.js` (`mes-finances-v2` → `v3`) s
 | `css/style.css` | Styles (light / dark, mobile, animations, printing) |
 | `js/app.js` | Logic: data, calculations, views, reports, guide |
 | `js/sync.js` | Sync and merge with the Google script |
+| `js/i18n.js` | French → English dictionary (the French text is the key) |
+| `js/guide.js` | Guide content in both languages |
 | `js/icons.js` | [Lucide](https://lucide.dev) icons (ISC license), only the ones in use |
 | `google-apps-script.gs` | Script to paste into script.google.com (the app copies it with the user's key) |
 | `sw.js`, `manifest.webmanifest`, `icon.svg` | Phone install and offline mode |
