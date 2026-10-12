@@ -1,6 +1,6 @@
 // Service worker: lets the app work offline once installed.
-const CACHE = 'mes-finances-v1';
-const ASSETS = ['./', './index.html', './css/style.css', './js/app.js', './icon.svg', './manifest.webmanifest'];
+const CACHE = 'mes-finances-v2';
+const ASSETS = ['./', './index.html', './css/style.css', './js/icons.js', './js/sync.js', './js/app.js', './icon.svg', './manifest.webmanifest', './google-apps-script.gs'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
