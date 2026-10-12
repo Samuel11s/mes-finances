@@ -93,7 +93,7 @@ const txFilter = { type: '', env: '', acc: '', q: '' };
 
 let NF;
 function buildFmt() {
-  try { NF = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: S.settings.currency }); }
+  try { NF = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: S.settings.currency, currencyDisplay: 'narrowSymbol' }); }
   catch {
     const nf = new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     NF = { format: v => nf.format(v) + ' ' + S.settings.currency };
