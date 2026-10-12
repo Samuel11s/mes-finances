@@ -570,7 +570,7 @@ function openGoal(gl) {
 /* ---------- Charts ---------- */
 
 function barsChart(hist) {
-  const W = 640, H = 220, B = 26, T = 10;
+  const W = 640, H = 260, B = 34, T = 10;
   const max = Math.max(1, ...hist.flatMap(h => [h.inc, h.exp]));
   const gw = W / hist.length, bw = Math.min(30, gw * 0.3), ph = H - T - B;
   let s = `<svg viewBox="0 0 ${W} ${H}" class="chart" role="img" aria-label="Revenus et dépenses des derniers mois">`;
