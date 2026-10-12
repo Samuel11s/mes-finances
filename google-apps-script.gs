@@ -1,5 +1,6 @@
 /**
  * Mes Finances (My Finances) — sync and automatic backups.
+ * The backup email follows the user's language (French or English).
  *
  * This script runs in YOUR own Google account (free). It:
  *   - keeps your data in Google Drive > "Mes Finances" (phone ⇄ computer sync);
@@ -46,7 +47,7 @@ function doPost(e) {
 
 // Opening the script URL in a browser just shows this message.
 function doGet() {
-  return ContentService.createTextOutput('Mes Finances : le script fonctionne. Colle cette adresse dans l\'app (Réglages > Synchronisation).');
+  return ContentService.createTextOutput("Mes Finances : le script fonctionne. Colle cette adresse dans l'app (Réglages > Synchronisation).\nMy Finances: the script works. Paste this address into the app (Settings > Sync).");
 }
 
 /* ---------- Run ONCE from the editor (▶ Run button) ---------- */
@@ -61,7 +62,7 @@ function setup() {
   } else if (EMAIL_FREQUENCY === 'monthly') {
     ScriptApp.newTrigger('sendBackupEmail').timeBased().onMonthDay(1).atHour(8).create();
   }
-  Logger.log('Installation terminée. Étape suivante : Déployer > Nouveau déploiement > Application Web.');
+  Logger.log('Setup complete. Next step: Deploy > New deployment > Web app. / Installation terminée. Étape suivante : Déployer > Nouveau déploiement > Application Web.');
 }
 
 /* ---------- Storage ---------- */
@@ -116,8 +117,9 @@ function sendBackupEmail() {
   if (!f) return;
   const json = f.getBlob().getDataAsString();
   const data = JSON.parse(json);
+  const en = data.settings && data.settings.lang === 'en';
   const currency = (data.settings && data.settings.currency) || '';
-  const fmt = c => (c / 100).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + currency;
+  const fmt = c => (c / 100).toLocaleString(en ? 'en-US' : 'fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + currency;
   const days = EMAIL_FREQUENCY === 'monthly' ? 31 : 7;
   const since = Utilities.formatDate(new Date(Date.now() - days * 864e5), Session.getScriptTimeZone(), 'yyyy-MM-dd');
   let income = 0, expenses = 0;
@@ -126,20 +128,30 @@ function sendBackupEmail() {
     if (t.type === 'income') income += t.amount - (t.fee || 0);
     if (t.type === 'expense') { expenses += t.amount; byEnvelope[t.envelopeId] = (byEnvelope[t.envelopeId] || 0) + t.amount; }
   });
+  // Envelope names are typed by the user: they are never translated.
   const names = {};
   data.envelopes.forEach(e => { names[e.id] = e.name; });
   const top = Object.keys(byEnvelope).sort((a, b) => byEnvelope[b] - byEnvelope[a]).slice(0, 5)
     .map(id => `<li>${names[id] || '?'} : <b>${fmt(byEnvelope[id])}</b></li>`).join('');
   const date = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd');
+  const T = en ? {
+    subject: `My Finances — backup of ${date}`, intro: 'Here is your automatic backup (attached).',
+    period: days === 7 ? 'Last 7 days' : 'Last month', income: 'Net income', expenses: 'Expenses', balance: 'Balance',
+    top: 'Top expenses:', restore: 'To restore: app > Settings > Import, then choose this file.', file: 'my-finances-backup',
+  } : {
+    subject: `Mes Finances — sauvegarde du ${date}`, intro: 'Voici ta sauvegarde automatique (pièce jointe).',
+    period: days === 7 ? 'Ces 7 derniers jours' : 'Ce dernier mois', income: 'Revenus nets', expenses: 'Dépenses', balance: 'Solde',
+    top: 'Principales dépenses :', restore: 'Pour restaurer : app > Réglages > Importer, puis choisis ce fichier.', file: 'mes-finances-sauvegarde',
+  };
   MailApp.sendEmail({
     to: Session.getEffectiveUser().getEmail(),
-    subject: `Mes Finances — sauvegarde du ${date}`,
-    htmlBody: `<p>Voici ta sauvegarde automatique (pièce jointe).</p>
-      <p><b>${days === 7 ? 'Ces 7 derniers jours' : 'Ce dernier mois'}</b> :<br>
-      Revenus nets : <b>${fmt(income)}</b><br>Dépenses : <b>${fmt(expenses)}</b><br>Solde : <b>${fmt(income - expenses)}</b></p>
-      ${top ? `<p>Principales dépenses :</p><ul>${top}</ul>` : ''}
-      <p style="color:#777">Pour restaurer : app > Réglages > Importer, puis choisis ce fichier.</p>`,
-    attachments: [Utilities.newBlob(json, 'application/json', `mes-finances-sauvegarde-${date}.json`)],
+    subject: T.subject,
+    htmlBody: `<p>${T.intro}</p>
+      <p><b>${T.period}</b> :<br>
+      ${T.income} : <b>${fmt(income)}</b><br>${T.expenses} : <b>${fmt(expenses)}</b><br>${T.balance} : <b>${fmt(income - expenses)}</b></p>
+      ${top ? `<p>${T.top}</p><ul>${top}</ul>` : ''}
+      <p style="color:#777">${T.restore}</p>`,
+    attachments: [Utilities.newBlob(json, 'application/json', `${T.file}-${date}.json`)],
   });
 }
 
