@@ -1,0 +1,46 @@
+name: ✨ Feature request
+description: An idea to make the app more useful.
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What part of your money life is hard to handle today?
+      placeholder: "E.g. I get paid in USD but pay my bills in UGX…"
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: How could the app help?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+
+  - type: dropdown
+    id: importance
+    attributes:
+      label: How important is it for you?
+      options:
+        - Must have
+        - Very useful
+        - Nice to have
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: principles
+    attributes:
+      label: App principles
+      description: The app stays free, serverless, offline-first and private.
+      options:
+        - label: My idea fits these principles (or I explain why not).
+          required: true

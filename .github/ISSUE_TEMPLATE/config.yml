@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📖 App guide
+    url: https://github.com/Samuel11s/mes-finances#readme
+    about: The full guide is also inside the app (Guide menu).
+  - name: ✉️ Contact the developer
+    url: mailto:samuelbitingingwa@gmail.com
+    about: For private questions or security issues.
+  - name: 💬 WhatsApp
+    url: https://wa.me/243978775490
+    about: A quick question?

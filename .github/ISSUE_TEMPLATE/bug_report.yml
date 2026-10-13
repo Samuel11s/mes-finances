@@ -1,0 +1,108 @@
+name: 🐞 Bug report
+description: Something doesn't work as expected.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this! 🙏
+        **Never paste your real financial data, your sync key or your connection code in an issue.**
+        You can write in English or French.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What's wrong?
+      placeholder: "E.g. After turning on sync, my envelopes show up twice."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open…
+        2. Tap…
+        3. See…
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+      description: A screenshot helps a lot (hide the amounts if needed).
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: App version
+      description: Settings → About.
+      placeholder: "2.0.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: device
+    attributes:
+      label: Device
+      multiple: true
+      options:
+        - Android
+        - iPhone / iPad
+        - Windows
+        - Mac
+        - Linux
+    validations:
+      required: true
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser
+      placeholder: "Chrome 130, Safari 18… · installed on the home screen? yes/no"
+
+  - type: dropdown
+    id: language
+    attributes:
+      label: App language
+      options:
+        - English
+        - French
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Envelopes / allocation
+        - Accounts / transfers / exchanges
+        - Currencies
+        - Goals
+        - Dashboard / reports
+        - Google sync / backups
+        - Language / translation
+        - Install / offline mode
+        - Other
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I searched the existing issues.
+          required: true
+        - label: I didn't share any personal data or sync key.
+          required: true
