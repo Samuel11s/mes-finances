@@ -1,8 +1,15 @@
+<p align="center"><img src="og-image.png" alt="Mes Finances — track every cent, even with irregular income" width="720"></p>
+
 # Mes Finances
+
+[![CI/CD](https://github.com/Samuel11s/mes-finances/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/Samuel11s/mes-finances/actions/workflows/ci-cd.yml)
+[![Release](https://img.shields.io/github/v/release/Samuel11s/mes-finances)](https://github.com/Samuel11s/mes-finances/releases)
+[![License](https://img.shields.io/badge/license-PolyForm%20Noncommercial-blue)](LICENSE.md)
+![Languages](https://img.shields.io/badge/app%20languages-French%20%7C%20English-0f766e)
 
 **Version 2.0.0** · developed by **Sbit/>**
 
-A web app to track every cent when income is irregular (Upwork freelancing, trading…), in one or several currencies.
+A web app to track every cent when income is irregular (Upwork freelancing, trading…), in one or several currencies. The app is available in **French and English** ("Mes Finances" / "My Finances").
 
 - **No server to pay for, no database, no account**: just HTML/CSS/JS files.
 - Data stays **in the device's browser** (localStorage). With the optional sync, it also goes to **your own Google Drive**, never to a third party.
@@ -30,9 +37,22 @@ python -m http.server 5178
 
 then open http://localhost:5178. Opening `index.html` directly also works, but without offline mode or copying the sync script.
 
-## Free hosting
+## Automatic deployment (GitHub Actions → Netlify)
 
-Any static hosting works. Just upload the content of this folder (except `.claude/`).
+The [`.github/workflows/ci-cd.yml`](.github/workflows/ci-cd.yml) workflow checks the project on every push and pull request (`node scripts/check.mjs`), then:
+- **push to `main`** → production deploy on Netlify;
+- **pull request** → preview deploy on a `pr-<number>` address.
+
+One-time setup:
+1. On [Netlify](https://app.netlify.com), create an empty site (*Add new site → Deploy manually*, drop any file) and copy its **Site ID** (*Site configuration → General*).
+2. Create a personal access token: *User settings → Applications → Personal access tokens*.
+3. In this GitHub repository: *Settings → Secrets and variables → Actions*, add `NETLIFY_SITE_ID` and `NETLIFY_AUTH_TOKEN`.
+
+Without these secrets, the checks still run and the deploy step is simply skipped.
+
+## Manual free hosting
+
+Any static hosting works. Just upload the app files (without `.github/`, `scripts/` or `.claude/`).
 
 - **Netlify Drop** (easiest): go to https://app.netlify.com/drop and drag and drop the folder.
 - **GitHub Pages**: push the folder to a GitHub repository, then Settings → Pages → Deploy from branch → `main` / root.
@@ -74,3 +94,21 @@ Data from before 2.0 is migrated automatically; a copy is kept on the device (Se
 | `sw.js`, `manifest.webmanifest` | Phone install and offline mode |
 | `icon.svg`, `icon-*.png`, `apple-touch-icon.png`, `favicon-32.png` | Icons (browser, Android, iPhone) |
 | `og-image.png` | Social media preview image (1200×630) |
+| `scripts/check.mjs` | Checks run by CI |
+| `_headers` | Netlify HTTP headers (security, service worker caching) |
+
+## Contributing
+
+Ideas, bug reports and pull requests are welcome: read [CONTRIBUTING.md](CONTRIBUTING.md). For security issues, write privately (see [SECURITY.md](SECURITY.md)).
+
+## License
+
+© 2026 Samuel Bulangalizi Bitingingwa (**Sbit/>**) — [PolyForm Noncommercial 1.0.0](LICENSE.md).
+
+In short (the official license text prevails): you may use, study, modify and share the app **for free, for personal or non-commercial purposes**, keeping the author's notice. **Selling, reselling or any commercial use is not allowed** without the author's written permission. The Lucide icons keep their ISC license ([THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)).
+
+## Developer
+
+**Sbit/>** — [GitHub](https://github.com/Samuel11s) · [Email](mailto:samuelbitingingwa@gmail.com) · [WhatsApp](https://wa.me/243978775490)
+
+Like the app? You can buy me a coffee from inside the app: Settings → About → **Buy me a coffee** ☕
