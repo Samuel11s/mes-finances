@@ -1,25 +1,26 @@
 # Mes Finances
 
-A web app to track every cent when income is irregular (Upwork freelancing, trading…).
+**Version 2.0.0** · developed by **Sbit/>**
+
+A web app to track every cent when income is irregular (Upwork freelancing, trading…), in one or several currencies.
 
 - **No server to pay for, no database, no account**: just HTML/CSS/JS files.
 - Data stays **in the device's browser** (localStorage). With the optional sync, it also goes to **your own Google Drive**, never to a third party.
-- Installable on phones (PWA) and **usable offline**.
+- Installable on phones (PWA, iPhone included) and **usable offline**.
 
-The **full user guide** is inside the app (**Guide** menu).
+The **full user guide** is inside the app (**Guide** menu). The version history is in Settings → About.
 
 ## Features
 
-- **French and English**: the language is detected from the device and can be changed in Settings. Translation is built in (`js/i18n.js`), so it works offline. What the user types is never translated; only default names that were never edited ("Loyer" ⇄ "Rent") follow the language.
 - **Envelopes**: every income is assigned ("Needs first" mode, ideal for irregular income), every expense comes out of an envelope.
-- **Accounts**: Upwork, trading, cash, mobile money… with transfers, fees and "Adjust" to spot untracked money.
+- **Multiple currencies**: each account and envelope has its own currency (e.g. income in USD, bills in UGX). Currencies only mix through a real exchange (a transfer between two accounts in different currencies), whose real rate is recorded. The app tells you how much to exchange to cover this month's budgets. Amounts are never recalculated.
+- **Accounts**: Upwork, trading, cash, mobile money… with transfers, exchanges, fees and "Adjust" to spot untracked money. Sort by name, balance, type or currency.
 - **Goals**: purchases funded in priority order (monitor, headset…).
-- **Monthly dashboard** and **annual report**: income by source, expenses by envelope, net worth over time, fees paid, month by month, largest expenses, PDF printing and CSV export.
-- **Phone ⇄ computer sync + automatic backups** through a free Google Apps Script in the user's own account:
-  - data file in Google Drive, "Mes Finances" folder;
-  - one dated copy per day (the last 30);
-  - backup sent by email every Sunday;
-  - works offline: changes are sent when the connection is back and merged (nothing is overwritten).
+- **Monthly dashboard** and **reports by period** (month, 3 months, 6 months, year, custom dates), compared with the previous period: income by source, expenses by envelope, exchanges, net worth over time, PDF printing and CSV export. Tapping a chart shows the details.
+- **Phone ⇄ computer sync + automatic backups** through a free Google Apps Script in the user's own account (Drive, one copy per day, email every Sunday). Works offline: changes are merged when the connection is back.
+- **French and English**, built in (offline). What the user types is never translated.
+- **Demo mode**: 6 months of sample data in memory, without touching the real data.
+- **About**: version, history, contact (email, WhatsApp, GitHub), suggestions / bugs, support.
 
 ## Run locally
 
@@ -39,20 +40,37 @@ Any static hosting works. Just upload the content of this folder (except `.claud
 
 Sharing the address is safe: every visitor gets their own empty app, in their own browser. The code contains no data and no key.
 
+### After deploying: link previews on WhatsApp / Facebook
+
+Some apps (WhatsApp in particular) only show the preview image when its address is absolute. In `index.html`, replace `og-image.png` with your site's full address in `og:image` and `twitter:image`, for example:
+
+```html
+<meta property="og:image" content="https://mes-finances.netlify.app/og-image.png">
+```
+
 ## Updating the app
 
-After a change, bump the cache version in `sw.js` (`mes-finances-v3` → `v4`) so installed devices get the new version.
+After a change:
+1. bump the cache version in `sw.js` (`mes-finances-v4` → `v5`) so installed devices get the new version;
+2. update `APP_VERSION` and `CHANGELOG` in `js/about.js` (and the version shown on the launch screen in `index.html`).
+
+Data from before 2.0 is migrated automatically; a copy is kept on the device (Settings → Go back to pre-2.0 data).
 
 ## Files
 
 | File | Role |
 |---|---|
-| `index.html` | App page |
+| `index.html` | App page, SEO / sharing tags, launch screen |
 | `css/style.css` | Styles (light / dark, mobile, animations, printing) |
-| `js/app.js` | Logic: data, calculations, views, reports, guide |
+| `js/app.js` | Logic: data, currencies, calculations, views, reports, demo |
 | `js/sync.js` | Sync and merge with the Google script |
 | `js/i18n.js` | French → English dictionary (the French text is the key) |
 | `js/guide.js` | Guide content in both languages |
+| `js/about.js` | Version, history, developer, contact, support |
+| `js/select.js` | Dropdowns with icons |
+| `js/demo.js` | Demo data (never saved) |
 | `js/icons.js` | [Lucide](https://lucide.dev) icons (ISC license), only the ones in use |
 | `google-apps-script.gs` | Script to paste into script.google.com (the app copies it with the user's key) |
-| `sw.js`, `manifest.webmanifest`, `icon.svg` | Phone install and offline mode |
+| `sw.js`, `manifest.webmanifest` | Phone install and offline mode |
+| `icon.svg`, `icon-*.png`, `apple-touch-icon.png`, `favicon-32.png` | Icons (browser, Android, iPhone) |
+| `og-image.png` | Social media preview image (1200×630) |
