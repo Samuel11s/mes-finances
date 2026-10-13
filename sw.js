@@ -16,10 +16,11 @@ self.addEventListener('activate', e => {
 });
 
 // Network first (to receive updates), cache as a fallback when offline.
+// "no-cache": the browser revalidates every file with the server instead of reusing an old copy.
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET' || new URL(e.request.url).origin !== location.origin) return;
   e.respondWith(
-    fetch(e.request)
+    fetch(e.request, { cache: 'no-cache' })
       .then(res => { const copy = res.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); return res; })
       .catch(() => caches.match(e.request).then(r => r || caches.match('./index.html')))
   );
