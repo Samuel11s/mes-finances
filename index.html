@@ -2,16 +2,94 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>Mes Finances</title>
-  <meta name="description" content="Suivi de revenus irréguliers, budgets par enveloppe, épargne et objectifs.">
+  <!-- No zoom: the app behaves like a native app (fields are 16px to avoid auto-zoom on iPhone). -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>Mes Finances — suis chaque centime</title>
+  <meta name="description" content="Application gratuite de budget pour revenus irréguliers (freelance, trading) : enveloppes, plusieurs devises (USD, UGX, CDF…), objectifs, rapports par période. Fonctionne hors ligne, données privées sur ton appareil.">
+  <meta name="keywords" content="budget, finances personnelles, enveloppes, freelance, Upwork, revenus irréguliers, multi-devises, USD, UGX, CDF, épargne, application gratuite, hors ligne">
+  <meta name="author" content="Sbit/>">
+  <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#0f766e">
+  <meta name="color-scheme" content="light dark">
+
+  <!-- Sharing on social networks (WhatsApp, Facebook, LinkedIn, X…).
+       After deploying, replace og-image.png with the full URL (e.g. https://your-site.netlify.app/og-image.png). -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Mes Finances">
+  <meta property="og:title" content="Mes Finances — suis chaque centime">
+  <meta property="og:description" content="Budget par enveloppes pour revenus irréguliers, en plusieurs devises. Gratuit, hors ligne, données privées.">
+  <meta property="og:image" content="og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Mes Finances — Suis chaque centime, même avec des revenus irréguliers.">
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Mes Finances — suis chaque centime">
+  <meta name="twitter:description" content="Budget par enveloppes pour revenus irréguliers, en plusieurs devises. Gratuit, hors ligne, données privées.">
+  <meta name="twitter:image" content="og-image.png">
+
+  <!-- Install as an app (Android, iPhone, desktop) -->
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Mes Finances">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="application-name" content="Mes Finances">
+  <meta name="format-detection" content="telephone=no">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Mes Finances",
+    "alternateName": "My Finances",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web, Android, iOS, Windows, macOS",
+    "inLanguage": ["fr", "en"],
+    "description": "Budget par enveloppes pour revenus irréguliers, en plusieurs devises. Gratuit, hors ligne, données privées.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Person", "name": "Sbit/>", "url": "https://github.com/Samuel11s" }
+  }
+  </script>
+
+  <!-- Launch screen: inline styles so it shows instantly. -->
+  <style>
+    #splash { position: fixed; inset: 0; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: linear-gradient(160deg, #0f766e, #134e4a); color: #fff; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      transition: opacity .4s ease, visibility .4s; }
+    #splash.hide { opacity: 0; visibility: hidden; }
+    #splash .sp-center { display: flex; flex-direction: column; align-items: center; gap: 16px; animation: sp-in .6s cubic-bezier(.2,.8,.2,1) both; }
+    #splash img { width: 96px; height: 96px; border-radius: 24px; box-shadow: 0 12px 40px rgba(0,0,0,.25); }
+    #splash .sp-name { font-size: 1.6rem; font-weight: 700; letter-spacing: .01em; }
+    #splash .sp-foot { position: absolute; bottom: calc(28px + env(safe-area-inset-bottom)); font-size: .85rem; opacity: .85; }
+    @keyframes sp-in { from { opacity: 0; transform: scale(.92); } }
+    @media (prefers-reduced-motion: reduce) { #splash .sp-center { animation: none; } }
+  </style>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <div id="splash" aria-hidden="true">
+    <div class="sp-center"><img src="icon-192.png" alt=""><div class="sp-name">Mes Finances</div></div>
+    <div class="sp-foot"><span class="sp-ver">v2.0.0</span> · <b>Sbit/&gt;</b></div>
+  </div>
+  <script>
+    // Name in the right language, and launch screen only once per session.
+    (function () {
+      try {
+        var d = JSON.parse(localStorage.getItem('mes-finances-v1') || 'null');
+        var lang = (d && d.settings && d.settings.lang) || (/^fr/i.test(navigator.language || '') ? 'fr' : 'en');
+        if (lang === 'en') document.querySelector('#splash .sp-name').textContent = 'My Finances';
+        if (sessionStorage.getItem('mf-splash')) document.getElementById('splash').remove();
+        else sessionStorage.setItem('mf-splash', '1');
+      } catch (e) { /* storage unavailable: show it anyway */ }
+    })();
+  </script>
+
+  <div id="demo-bar" hidden></div>
   <header class="topbar">
     <div class="brand"><img src="icon.svg" alt="" width="28" height="28"><span>Mes Finances</span></div>
     <button class="sync-pill" data-act="sync-pill"></button>
@@ -26,12 +104,17 @@
   </div>
   <button class="fab" id="fab" aria-label="Ajouter une opération" data-act="quick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
   <dialog id="modal"></dialog>
+  <div id="tip" role="tooltip"></div>
   <div id="toast" role="status" aria-live="polite"></div>
   <input type="file" id="import-file" accept="application/json,.json" hidden>
+  <noscript><p style="padding:24px;font-family:sans-serif">Mes Finances a besoin de JavaScript. / My Finances needs JavaScript.</p></noscript>
   <script src="js/icons.js"></script>
   <script src="js/i18n.js"></script>
   <script src="js/guide.js"></script>
+  <script src="js/about.js"></script>
+  <script src="js/select.js"></script>
   <script src="js/sync.js"></script>
+  <script src="js/demo.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
