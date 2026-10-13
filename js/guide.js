@@ -13,6 +13,7 @@ function guideSections(lang) {
       <p>Result: every cent has a job, and you always know how much you can spend on each thing.</p>`],
     ['sparkles', 'Getting started (10 minutes)', `
       <ol class="steps">
+        <li><b>Currencies</b>: on first launch, say which currency you earn in and which one you spend in (e.g. USD and UGX).</li>
         <li><b>Accounts</b>: create one account for each place your money lives (Upwork, Payoneer, mobile money, cash, trading…) with its <b>current balance</b>.</li>
         <li><b>Envelopes</b>: adapt the list to your life, set a <b>monthly budget</b> for fixed costs (rent, bills, studies…) and a <b>percentage</b> for the rest (savings, investing, leisure…).</li>
         <li><b>Assign</b> the money you already have (it's in “Unassigned”).</li>
@@ -25,6 +26,33 @@ function guideSections(lang) {
         <li>Upwork withdrawal to mobile money, deposit to your trading account: <b>+ → Transfer</b>. It's neither income nor an expense.</li>
         <li>Trading loss: <b>+ → Income</b> and tick “This is a loss”.</li>
         <li>Once a week: <b>Accounts → Adjust</b> to check balances match reality. The gap shows up as “untracked money”.</li>
+        <li><b>Accounts</b>: sort them by name, balance, type or currency with “Sort by”.</li>
+      </ul>`],
+    ['coins', 'Multiple currencies (e.g. USD and UGX)', `
+      <p>If you earn in one currency and spend in another (e.g. Upwork income in <b>USD</b>, bills in <b>UGX</b>), the app keeps <b>two separate pockets</b>, just like real life.</p>
+      <ul class="steps">
+        <li><b>Each account and envelope has its own currency</b>: Upwork in USD, mobile money in UGX; rent in UGX, emergency fund in USD… (Settings → Currencies → Manage currencies).</li>
+        <li><b>One “Unassigned” per currency</b>: USD income is assigned to USD envelopes.</li>
+        <li><b>Exchange</b>: a transfer between a USD account and a UGX account is an exchange. Enter what you sent and what you <b>actually received</b>: the rate is recorded, with fees.</li>
+        <li><b>“How much to exchange?”</b>: the dashboard tells you how much UGX you're missing for this month's budgets, and the USD equivalent at your last rate. The <b>Exchange</b> button prepares the transfer. When you assign USD with “Needs first”, the app keeps that amount aside for the exchange.</li>
+        <li><b>Paying a UGX expense with USD</b> (e.g. an online subscription): the app asks for both amounts so the envelope stays accurate.</li>
+        <li><b>Amounts are never recalculated</b>: changing an account's currency converts nothing, and your history doesn't move when the rate changes. Totals in the main currency are marked ≈.</li>
+        <li><b>See today's rate</b> button (in an exchange): shows a reference rate when you're online, to compare with the one you got. Optional.</li>
+      </ul>`],
+    ['chart-column', 'Reports by period', `
+      <ul class="steps">
+        <li>Pick the period: <b>Month, 3 months, 6 months, Year</b> or <b>Custom</b> (start and end dates). The arrows move to the previous or next period.</li>
+        <li>Every figure is compared with the <b>previous period</b> of the same length.</li>
+        <li><b>Tap a bar, a point or a line</b> in a chart to see its details.</li>
+        <li>You'll also find income by source, expenses by envelope vs budget, currency exchanges (average rate, fees) and the largest expenses.</li>
+        <li><b>Print / PDF</b> and <b>CSV</b> export the period on screen.</li>
+      </ul>`],
+    ['flask-conical', 'Try the demo', `
+      <p>Settings → <b>Demo → Start the demo</b>: the app fills up with 6 months of sample data (income in USD, expenses in UGX) so you can see every feature.</p>
+      <ul class="steps">
+        <li>Your real data is <b>neither changed nor synced</b>.</li>
+        <li>Try anything: nothing is saved.</li>
+        <li>Leave with the <b>Exit</b> button in the purple banner.</li>
       </ul>`],
     ['trending-up', 'Tips for irregular income', `
       <ul class="steps">
@@ -76,7 +104,8 @@ function guideSections(lang) {
       <p><b>I changed phones, do I lose everything?</b><br>No: with sync, connect the new phone with your code. Without sync, import your latest backup (Settings → Import).</p>
       <p><b>I made a mistake in a transaction.</b><br>Tap it in the list to edit or delete it.</p>
       <p><b>An envelope is negative.</b><br>You spent more than planned. Use “Move” to take money from another envelope: that's where you see what the expense really costs.</p>
-      <p><b>Which currency?</b><br>Pick it in Settings. If you earn in USD but spend in another currency, choose the one you think your budget in and convert when you record.</p>
+      <p><b>I earn in USD but spend in UGX (or CDF…)?</b><br>See “Multiple currencies” above: each account and envelope has its own currency, and exchanges are recorded at the real rate.</p>
+      <p><b>Found a bug or have an idea?</b><br>Settings → About → <b>Suggestion / bug</b>, by email or WhatsApp.</p>
       <p><b>If I switch language, is my data translated?</b><br>No: what you typed stays as you typed it. Only the default names you never edited follow the language.</p>`],
   ];
 
@@ -91,6 +120,7 @@ function guideSections(lang) {
       <p>Résultat : chaque centime a une mission, et tu sais exactement combien tu peux dépenser pour chaque chose.</p>`],
     ['sparkles', 'Bien démarrer (10 minutes)', `
       <ol class="steps">
+        <li><b>Devises</b> : à la première ouverture, indique dans quelle devise tu reçois tes revenus et dans laquelle tu dépenses (ex. USD et UGX).</li>
         <li><b>Comptes</b> : crée un compte pour chaque endroit où se trouve ton argent (Upwork, Payoneer, mobile money, espèces, trading…) avec son <b>solde actuel</b>.</li>
         <li><b>Enveloppes</b> : adapte la liste à ta vie, puis indique le <b>budget mensuel</b> de chaque poste fixe (loyer, factures, études…) et un <b>pourcentage</b> pour le reste (épargne, investissement, loisirs…).</li>
         <li><b>Répartis</b> l'argent que tu as déjà (il est dans « Non réparti »).</li>
@@ -103,6 +133,33 @@ function guideSections(lang) {
         <li>Retrait Upwork vers mobile money, dépôt sur le compte de trading : <b>+ → Transfert</b>. Ce n'est ni un revenu ni une dépense.</li>
         <li>Perte de trading : <b>+ → Revenu</b> en cochant « C'est une perte ».</li>
         <li>Une fois par semaine : <b>Comptes → Ajuster</b> pour vérifier que les soldes correspondent à la réalité. L'écart s'affiche comme « argent non tracé ».</li>
+        <li><b>Comptes</b> : trie-les par nom, solde, type ou devise avec « Trier par ».</li>
+      </ul>`],
+    ['coins', 'Plusieurs devises (ex. USD et UGX)', `
+      <p>Si tu gagnes dans une devise et dépenses dans une autre (ex. revenus Upwork en <b>USD</b>, charges en <b>UGX</b>), l'app garde <b>deux poches séparées</b>, comme dans la vraie vie.</p>
+      <ul class="steps">
+        <li><b>Chaque compte et chaque enveloppe a sa devise</b> : Upwork en USD, mobile money en UGX ; loyer en UGX, fonds d'urgence en USD… (Réglages → Devises → Gérer les devises).</li>
+        <li><b>Un « Non réparti » par devise</b> : un revenu en USD se répartit dans les enveloppes en USD.</li>
+        <li><b>Le change</b> : un transfert entre un compte USD et un compte UGX est un change. Tu indiques ce que tu as envoyé et ce que tu as <b>réellement reçu</b> : le taux est enregistré, avec les frais.</li>
+        <li><b>« Combien changer ? »</b> : l'accueil te dit combien il te manque en UGX pour les budgets du mois, et l'équivalent en USD selon ton dernier taux. Le bouton <b>Changer</b> prépare le transfert. En répartissant tes USD avec « Besoins d'abord », l'app garde cette somme de côté pour le change.</li>
+        <li><b>Payer en USD une dépense en UGX</b> (ex. abonnement en ligne) : l'app demande les deux montants, l'enveloppe reste juste.</li>
+        <li><b>Les montants ne sont jamais recalculés</b> : changer la devise d'un compte ne convertit rien, et ton historique ne bouge pas quand le cours change. Les totaux en devise principale sont indiqués par ≈.</li>
+        <li>Bouton <b>Voir le taux du jour</b> (dans un change) : affiche un taux de référence si tu es en ligne, pour comparer avec celui qu'on t'a donné. Facultatif.</li>
+      </ul>`],
+    ['chart-column', 'Rapports par période', `
+      <ul class="steps">
+        <li>Choisis la période : <b>Mois, 3 mois, 6 mois, Année</b> ou <b>Personnalisé</b> (dates de début et de fin). Les flèches passent à la période précédente ou suivante.</li>
+        <li>Chaque chiffre est comparé à la <b>période précédente</b> de même durée.</li>
+        <li><b>Touche une barre, un point ou une ligne</b> d'un graphique pour voir son détail.</li>
+        <li>Tu y trouves aussi : revenus par source, dépenses par enveloppe comparées au budget, changes de devises (taux moyen, frais) et plus grosses dépenses.</li>
+        <li><b>Imprimer / PDF</b> et <b>CSV</b> exportent la période affichée.</li>
+      </ul>`],
+    ['flask-conical', 'Essayer la démo', `
+      <p>Réglages → <b>Démo → Lancer la démo</b> : l'app se remplit de 6 mois d'exemple (revenus en USD, dépenses en UGX) pour voir toutes les fonctions.</p>
+      <ul class="steps">
+        <li>Tes vraies données ne sont <b>ni modifiées ni synchronisées</b>.</li>
+        <li>Tu peux tout essayer : rien n'est enregistré.</li>
+        <li>Quitte avec le bouton <b>Quitter</b> du bandeau violet.</li>
       </ul>`],
     ['trending-up', 'Conseils pour des revenus irréguliers', `
       <ul class="steps">
@@ -154,7 +211,8 @@ function guideSections(lang) {
       <p><b>J'ai changé de téléphone, je perds tout ?</b><br>Non : avec la synchro, connecte le nouveau téléphone avec ton code. Sans synchro, importe ta dernière sauvegarde (Réglages → Importer).</p>
       <p><b>Je me suis trompé dans une opération.</b><br>Touche-la dans la liste pour la modifier ou la supprimer.</p>
       <p><b>Une enveloppe est en négatif.</b><br>Tu as dépensé plus que prévu. Utilise « Déplacer » pour prendre l'argent dans une autre enveloppe : c'est là que tu vois ce que coûte vraiment cette dépense.</p>
-      <p><b>Dans quelle devise ?</b><br>Choisis-la dans Réglages. Si tu reçois en USD mais dépenses en CDF, choisis la devise dans laquelle tu penses ton budget et convertis au moment de noter.</p>
+      <p><b>Je gagne en USD mais je dépense en UGX (ou CDF…) ?</b><br>Voir « Plusieurs devises » plus haut : chaque compte et enveloppe a sa devise, et les changes sont enregistrés au vrai taux.</p>
+      <p><b>Un bug, une idée ?</b><br>Réglages → À propos → <b>Suggestion / bug</b>, par e-mail ou WhatsApp.</p>
       <p><b>Si je change de langue, mes données sont-elles traduites ?</b><br>Non : ce que tu as tapé reste tel quel. Seuls les noms par défaut que tu n'as jamais modifiés suivent la langue.</p>`],
   ];
 }
