@@ -31,9 +31,9 @@ const PILL = () => ({
 });
 function updateSyncPill() {
   const pills = PILL();
-  const [ic, label] = pills[syncState.status] || pills.off;
+  const [ic, label] = DEMO ? ['flask-conical', t('Démo')] : (pills[syncState.status] || pills.off);
   for (const el of $$('.sync-pill')) {
-    el.className = `sync-pill s-${syncState.status}`;
+    el.className = `sync-pill s-${DEMO ? 'demo' : syncState.status}`;
     el.title = syncState.error || (syncCfg.lastSync ? t('Dernière synchro : {d}', { d: dateTime(syncCfg.lastSync) }) : label);
     el.innerHTML = `${icon(ic, syncState.status === 'syncing' ? 'spin' : '')}<span>${label}</span>`;
   }
@@ -71,7 +71,7 @@ function fingerprint(d) {
 
 function onLocalChange() {
   localRev++;
-  if (!syncOn()) return;
+  if (!syncOn() || DEMO) return;
   syncCfg.dirty = true; saveSyncCfg();
   setSync(navigator.onLine ? 'pending' : 'offline');
   clearTimeout(syncState.timer);
@@ -79,7 +79,7 @@ function onLocalChange() {
 }
 
 async function syncNow(manual = false) {
-  if (!syncOn()) return;
+  if (!syncOn() || DEMO) return; // never sync demo data
   if (syncState.busy) { syncState.again = true; return; }
   if (!navigator.onLine) { setSync('offline'); if (manual) toast(t('Pas de connexion : la synchro se fera au retour du réseau')); return; }
   syncState.busy = true; syncState.again = false;
@@ -90,6 +90,7 @@ async function syncNow(manual = false) {
     const merged = remote ? mergeData(S, remote) : S;
     if (!remote || fingerprint(sharedData(merged)) !== fingerprint(remote)) await callScript('push', { data: sharedData(merged) });
     // If the user changed something during the sync, merge with the current state.
+    if (DEMO) throw new Error(t('Indisponible en mode démo'));
     if (fingerprint(sharedData(merged)) !== fingerprint(sharedData(S))) applyData(mergeData(S, sharedData(merged)));
     if (localRev === rev) syncCfg.dirty = false;
     syncCfg.lastSync = Date.now(); saveSyncCfg();
@@ -130,8 +131,13 @@ async function copyScript() {
   }
 }
 
-// First connection of a device: avoid duplicating the default envelopes.
+// First connection of a device. To avoid duplicates:
+// - empty Drive → this device is uploaded to it;
+// - this device has no transactions yet → it takes the whole content of the Drive;
+// - the Drive has no transactions but this device does → this device replaces the Drive (the old items are marked as deleted);
+// - both have transactions → ask the user: merge (then group identical items) or take the Drive.
 async function connectSync(url, key) {
+  if (DEMO) return toast(t('Indisponible en mode démo'));
   url = url.trim(); key = key.trim();
   if (!/^https:\/\/script\.google(usercontent)?\.com\//.test(url)) return toast(t("L'adresse doit commencer par https://script.google.com/"));
   if (key.length < 16) return toast(t('Clé secrète invalide'));
@@ -140,20 +146,24 @@ async function connectSync(url, key) {
   try {
     const ping = await callScript('ping', {}, cfg);
     const { data: remote } = await callScript('pull', {}, cfg);
-    const localEmpty = !S.tx.length;
-    const remoteEmpty = !remote || !remote.tx?.length;
     const finish = async mode => {
       try {
         if (mode === 'adopt') applyData(fromRemote(remote));
-        else if (mode === 'merge') applyData(mergeData(S, remote));
+        else if (mode === 'merge') { applyData(mergeData(S, remote)); if (dedupe()) persist(); }
+        else if (mode === 'replace') {
+          const now = Date.now();
+          for (const c of COLS) for (const x of remote[c] || []) if (!S[c].some(y => y.id === x.id)) S.deleted[x.id] = now;
+          persist();
+        }
         await callScript('push', { data: sharedData(S) }, cfg);
         Object.assign(syncCfg, cfg, { linked: true, email: ping.email, lastSync: Date.now(), dirty: false });
         saveSyncCfg(); setSync('ok'); render();
         toast(t('Synchronisation activée ({x})', { x: ping.email || 'Google Drive' }));
       } catch (e) { setSync('off'); toast(e.message); }
     };
-    if (remoteEmpty) return finish('local');
-    if (localEmpty) return finish('adopt');
+    if (!remote) return finish('local');
+    if (!S.tx.length) return finish('adopt');
+    if (!remote.tx?.length) return finish('replace');
     setSync('off');
     openModal(t('Deux versions trouvées'), `
       <p>${t('Cet appareil contient {a} opération(s) et ton Google Drive en contient {b}.', { a: `<b>${S.tx.length}</b>`, b: `<b>${remote.tx.length}</b>` })}</p>
@@ -221,7 +231,7 @@ function syncSection() {
 
 function handleSyncAction(act, el) {
   switch (act) {
-    case 'sync-pill': if (syncOn()) syncNow(true); else go('settings'); return true;
+    case 'sync-pill': if (DEMO) exitDemo(); else if (syncOn()) syncNow(true); else go('settings'); return true;
     case 'sync-now': syncNow(true); return true;
     case 'sync-mode': syncCfg.mode = el.dataset.mode; saveSyncCfg(); render(); return true;
     case 'sync-script': copyScript(); return true;
@@ -240,11 +250,13 @@ function handleSyncAction(act, el) {
   return false;
 }
 
+const initSyncState = () => setSync(syncOn() ? (navigator.onLine ? (syncCfg.dirty ? 'pending' : 'ok') : 'offline') : 'off');
+
 function initSync() {
-  setSync(syncOn() ? (navigator.onLine ? (syncCfg.dirty ? 'pending' : 'ok') : 'offline') : 'off');
+  initSyncState();
   syncNow();
   window.addEventListener('online', () => syncNow());
-  window.addEventListener('offline', () => { if (syncOn()) setSync('offline'); });
+  window.addEventListener('offline', () => { if (syncOn() && !DEMO) setSync('offline'); });
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible' && Date.now() - (syncCfg.lastSync || 0) > 60000) syncNow();
   });
