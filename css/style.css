@@ -490,3 +490,5 @@ a.btn.primary { color: #fff; }
 
 @media print { #demo-bar, #tip, .rep-bar { display: none !important; } }
 .nowrap { white-space: nowrap; }
+.pay-card { display: grid; grid-template-columns: auto minmax(0, 1fr); }
+.pay-card > .btn { grid-column: 1 / -1; justify-self: start; }
