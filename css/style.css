@@ -480,12 +480,12 @@ a.btn { text-decoration: none; color: inherit; }
 a.btn.primary { color: #fff; }
 .pay-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
 .pay-opt { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface-2); cursor: pointer; text-align: left; font-weight: 600; }
-.pay-opt span { flex: 1; }
+.pay-opt > span:not(.tile) { flex: 1; }
 .pay-opt.on { border-color: var(--accent); background: var(--accent-soft); }
 .pay-opt .chev { color: var(--muted); }
-.pay-card { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 12px; background: var(--surface-2); animation: rise .25s both; }
+.pay-card { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 14px; border-radius: 12px; background: var(--surface-2); animation: rise .25s both; }
 .pay-card .grow { flex: 1; min-width: 0; }
-.pay-num { font-size: 1.3rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 2px 0; }
+.pay-num { white-space: nowrap; font-size: 1.3rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 2px 0; }
 .seg button .i { width: 15px; height: 15px; }
 
 @media print { #demo-bar, #tip, .rep-bar { display: none !important; } }
