@@ -89,12 +89,12 @@ function openFeedback() {
   const f = openModal(t('Suggestion / bug'), `
     <p class="hint">${t("Une idée, un problème, une fonctionnalité qui te manque ? Écris-le ici puis envoie-le par e-mail ou WhatsApp.")}</p>
     <div class="seg">${Object.entries(kinds).map(([k, [ic, l]]) => `<button type="button" data-kind="${k}" class="${k === kind ? 'on' : ''}">${icon(ic)} ${l}</button>`).join('')}</div>
-    ${field(t('Message'), `<textarea name="msg" rows="6" autofocus placeholder="${t('Décris ton idée ou le problème (ce que tu faisais, ce qui s\'est passé)…')}"></textarea>`)}`, null,
+    ${field(t('Message'), `<textarea name="msg" rows="6" autofocus placeholder="${t("Décris ton idée ou le problème (ce que tu faisais, ce qui s'est passé)…")}"></textarea>`)}`, null,
   { extra: `<button type="button" class="btn" data-send="wa">${icon('message-circle')} WhatsApp</button><button type="button" class="btn primary" data-send="mail">${icon('send')} ${t('E-mail')}</button>` });
   $$('[data-kind]', f).forEach(b => b.onclick = () => { kind = b.dataset.kind; $$('[data-kind]', f).forEach(x => x.classList.toggle('on', x === b)); });
   $$('[data-send]', f).forEach(b => b.onclick = () => {
     const msg = f.elements.msg.value.trim();
-    if (!msg) return toast(t('Écris d\'abord ton message'));
+    if (!msg) return toast(t("Écris d'abord ton message"));
     const head = `[${t('Mes Finances')} ${APP_VERSION}] ${kinds[kind][1]}`;
     const body = `${msg}\n\n— ${t('Version')} ${APP_VERSION} · ${LANG.toUpperCase()}`;
     window.open(b.dataset.send === 'mail' ? mailto(head, body) : waLink(`${head}\n\n${body}`), '_blank');

@@ -1236,7 +1236,7 @@ function viewDashboard() {
       <div class="card-head" style="margin-top:18px"><h2>${t("Où va l'argent")}</h2><button class="btn sm" data-act="go" data-view="envelopes">${t('Enveloppes')}</button></div>
       ${spend.length ? spend.slice(0, 8).map(({ e, v }) => hbar(`${tile(e.icon, e.color, 'xs')} ${esc(e.name)}`, v, Math.max(e.target, v), {
         right: e.target ? `${money(v, e.currency)} / ${money(e.target, e.currency)}` : money(v, e.currency), over: e.target && v > e.target, color: e.color,
-        tip: [`<b>${esc(e.name)}</b>`, `${t('Dépensé')} : ${money(v, e.currency)}`, e.target ? `${t('Budget')} : ${money(e.target, e.currency)} (${pct(v, e.target)} %)` : '', `${t('Reste dans l\'enveloppe')} : ${money(C.env[e.id], e.currency)}`],
+        tip: [`<b>${esc(e.name)}</b>`, `${t('Dépensé')} : ${money(v, e.currency)}`, e.target ? `${t('Budget')} : ${money(e.target, e.currency)} (${pct(v, e.target)} %)` : '', `${t("Reste dans l'enveloppe")} : ${money(C.env[e.id], e.currency)}`],
       })).join('') : `<p class="muted">${t('Aucune dépense ce mois.')}</p>`}
     </div>
   </div>
@@ -1489,7 +1489,7 @@ function viewSettings() {
   const others = C.curs.filter(c => c !== main);
   const hasBackup = !!localStorage.getItem(BACKUP_KEY);
   return `<div class="page-head"><h1>${t('Réglages')}</h1></div>
-  ${DEMO ? alertBox('flask-conical', t('Tu es en mode démo : les réglages de synchronisation, de sauvegarde et d\'effacement sont désactivés.'), 'info') : ''}
+  ${DEMO ? alertBox('flask-conical', t("Tu es en mode démo : les réglages de synchronisation, de sauvegarde et d'effacement sont désactivés."), 'info') : ''}
   <div class="grid cols-2">
     ${syncSection()}
     <div class="card"><h2>${icon('coins')} ${t('Devises')}</h2>
@@ -1507,7 +1507,7 @@ function viewSettings() {
         <button class="btn" data-act="import">${icon('upload')} ${t('Importer')}</button>
         <button class="btn" data-act="csv">${icon('file-spreadsheet')} ${t('CSV (Excel)')}</button>
       </div>
-      ${hasBackup ? `<p class="hint" style="margin-top:12px">${t("Une copie de tes données d'avant la mise à jour 2.0 est gardée sur cet appareil.")}</p><button class="btn sm ghost" data-act="restore-backup">${icon('undo-2')} ${t('Revenir aux données d\'avant la 2.0')}</button>` : ''}
+      ${hasBackup ? `<p class="hint" style="margin-top:12px">${t("Une copie de tes données d'avant la mise à jour 2.0 est gardée sur cet appareil.")}</p><button class="btn sm ghost" data-act="restore-backup">${icon('undo-2')} ${t("Revenir aux données d'avant la 2.0")}</button>` : ''}
     </div>
     <div class="card"><h2>${icon('settings')} ${t('Préférences')}</h2>
       <div class="field"><span>${t('Langue')}</span>${langSwitch()}<small>${t("Seule l'interface change : ce que tu as tapé reste tel quel.")}</small></div>
