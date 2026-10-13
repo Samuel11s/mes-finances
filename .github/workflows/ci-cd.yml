@@ -1,0 +1,91 @@
+# Checks the project on every push / pull request, then deploys it to Netlify:
+# - push to main   → production deploy
+# - pull request   → preview deploy on a "pr-<number>" alias
+# Deploying needs two repository secrets: NETLIFY_AUTH_TOKEN and NETLIFY_SITE_ID
+# (Settings → Secrets and variables → Actions). Without them, only the checks run.
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-cd-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Syntax, translations, offline files, version
+        run: node scripts/check.mjs
+
+      - name: Build the site (dist/)
+        run: |
+          mkdir -p dist
+          cp -r index.html manifest.webmanifest sw.js google-apps-script.gs _headers \
+                icon.svg ./*.png css js dist/
+          echo "Published files:" && find dist -type f | sort
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: dist
+          retention-days: 7
+
+  deploy:
+    name: Netlify deploy
+    needs: check
+    runs-on: ubuntu-latest
+    # No deploy for pull requests from forks (they can't access the secrets).
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    env:
+      NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+    steps:
+      - name: Is Netlify configured?
+        id: cfg
+        run: |
+          if [ -n "$NETLIFY_AUTH_TOKEN" ] && [ -n "$NETLIFY_SITE_ID" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Deploy skipped: add the NETLIFY_AUTH_TOKEN and NETLIFY_SITE_ID secrets to enable it."
+          fi
+
+      - uses: actions/download-artifact@v4
+        if: steps.cfg.outputs.ready == 'true'
+        with:
+          name: site
+          path: dist
+
+      - name: Production deploy
+        if: steps.cfg.outputs.ready == 'true' && github.event_name != 'pull_request'
+        env:
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+        run: |
+          title=$(printf '%s' "${COMMIT_MSG:-manual deploy}" | head -n1 | cut -c1-80)
+          npx --yes netlify-cli@17 deploy --dir=dist --prod \
+            --message "${GITHUB_SHA::7} · $title" --json > deploy.json
+          url=$(node -e "console.log(require('./deploy.json').url)")
+          echo "### 🚀 Live: $url" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Pull request preview
+        if: steps.cfg.outputs.ready == 'true' && github.event_name == 'pull_request'
+        run: |
+          npx --yes netlify-cli@17 deploy --dir=dist --alias "pr-${{ github.event.number }}" \
+            --message "PR #${{ github.event.number }}" --json > deploy.json
+          url=$(node -e "console.log(require('./deploy.json').deploy_url)")
+          echo "### 🔍 Preview: $url" >> "$GITHUB_STEP_SUMMARY"
