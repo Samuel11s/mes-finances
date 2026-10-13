@@ -397,7 +397,7 @@ function kpiMoney(map, mode = 'money') {
   if (nz.length <= 1) { const [c, v] = nz[0] || [MAIN(), 0]; return { value: countVal(v, mode, c), detail: '' }; }
   const r = inMain(map);
   if (r.missing.length) return { value: nz.map(([c, v]) => `<span class="mline">${mode === 'signed' ? signed(v, c) : money(v, c)}</span>`).join(''), detail: t('taux manquant pour {c}', { c: r.missing.join(', ') }) };
-  return { value: `≈ ${countVal(r.total, mode)}`, detail: moneyList(map, mode) };
+  return { value: `<span class="nowrap">≈ ${countVal(r.total, mode)}</span>`, detail: moneyList(map, mode) };
 }
 
 function statsFor(test) {
@@ -1437,7 +1437,7 @@ function viewReports() {
   <div class="grid kpis">
     <div class="card kpi"><div class="label">${icon('arrow-down-left')} ${t('Revenus nets')}</div><div class="value pos">${kInc.value}</div><div class="sub">${kInc.detail ? kInc.detail + '<br>' : ''}${vs(st.income, prev.income, true)}</div></div>
     <div class="card kpi"><div class="label">${icon('arrow-up-right')} ${t('Dépenses')}</div><div class="value neg">${kExp.value}</div><div class="sub">${kExp.detail ? kExp.detail + '<br>' : ''}${vs(st.expense, prev.expense, false)}</div></div>
-    <div class="card kpi accent"><div class="label">${icon('piggy-bank')} ${t('Gardé (revenus − dépenses)')}</div><div class="value ${saved < 0 ? 'neg' : ''}">${C.multi ? '≈ ' : ''}${countVal(saved, 'signed')}</div><div class="sub">${t("taux d'épargne {p} %", { p: pct(saved, st.income) })}</div></div>
+    <div class="card kpi accent"><div class="label">${icon('piggy-bank')} ${t('Gardé (revenus − dépenses)')}</div><div class="value ${saved < 0 ? 'neg' : ''}"><span class="nowrap">${C.multi ? '≈ ' : ''}${countVal(saved, 'signed')}</span></div><div class="sub">${t("taux d'épargne {p} %", { p: pct(saved, st.income) })}</div></div>
     <div class="card kpi"><div class="label">${icon('calendar')} ${t('Par mois (moyenne)')}</div><div class="value">${money(Math.round(st.income / nbMonths))}</div><div class="sub">${t('dépenses {x}/mois', { x: money(Math.round(st.expense / nbMonths)) })}</div></div>
     <div class="card kpi"><div class="label">${icon('hand-coins')} ${t('Frais payés')}</div><div class="value">${money(fees)}</div><div class="sub">${t('{p} % de tes revenus bruts', { p: pct(fees, st.income + st.fees) })}</div></div>
     <div class="card kpi"><div class="label">${icon('scale')} ${t('Argent non tracé')}</div><div class="value ${st.untracked ? 'neg' : ''}">${money(st.untracked)}</div><div class="sub">${st.untracked ? t('à réduire à zéro') : t('bravo, tout est noté')}</div></div>

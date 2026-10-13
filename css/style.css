@@ -489,3 +489,4 @@ a.btn.primary { color: #fff; }
 .seg button .i { width: 15px; height: 15px; }
 
 @media print { #demo-bar, #tip, .rep-bar { display: none !important; } }
+.nowrap { white-space: nowrap; }
