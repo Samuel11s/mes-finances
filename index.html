@@ -4,30 +4,38 @@
   <meta charset="utf-8">
   <!-- No zoom: the app behaves like a native app (fields are 16px to avoid auto-zoom on iPhone). -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-  <title>Mes Finances — suis chaque centime</title>
-  <meta name="description" content="Application gratuite de budget pour revenus irréguliers (freelance, trading) : enveloppes, plusieurs devises (USD, UGX, CDF…), objectifs, rapports par période. Fonctionne hors ligne, données privées sur ton appareil.">
-  <meta name="keywords" content="budget, finances personnelles, enveloppes, freelance, Upwork, revenus irréguliers, multi-devises, USD, UGX, CDF, épargne, application gratuite, hors ligne">
+  <!-- The app is bilingual on a single URL, so titles and descriptions mix French and English. -->
+  <title>Mes Finances · My Finances — suis chaque centime · track every cent</title>
+  <meta name="description" content="Budget gratuit pour revenus irréguliers : enveloppes, plusieurs devises (USD, UGX, CDF…), objectifs, rapports. Free budgeting app for irregular income: envelopes, multiple currencies, goals, reports. Hors ligne, données privées · Offline, private data.">
+  <meta name="keywords" content="budget, finances personnelles, personal finance, envelope budgeting, enveloppes, freelance, Upwork, revenus irréguliers, irregular income, multi-devises, multi-currency, USD, UGX, CDF, épargne, savings, hors ligne, offline, PWA">
   <meta name="author" content="Sbit/>">
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#0f766e">
   <meta name="color-scheme" content="light dark">
+  <link rel="canonical" href="https://my-finances-dashboard.netlify.app/">
+  <link rel="alternate" hreflang="fr" href="https://my-finances-dashboard.netlify.app/">
+  <link rel="alternate" hreflang="en" href="https://my-finances-dashboard.netlify.app/">
+  <link rel="alternate" hreflang="x-default" href="https://my-finances-dashboard.netlify.app/">
 
-  <!-- Sharing on social networks (WhatsApp, Facebook, LinkedIn, X…).
-       After deploying, replace og-image.png with the full URL (e.g. https://your-site.netlify.app/og-image.png). -->
+  <!-- Sharing on social networks (WhatsApp, Facebook, LinkedIn, X…): absolute URLs are required. -->
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Mes Finances">
-  <meta property="og:title" content="Mes Finances — suis chaque centime">
-  <meta property="og:description" content="Budget par enveloppes pour revenus irréguliers, en plusieurs devises. Gratuit, hors ligne, données privées.">
-  <meta property="og:image" content="og-image.png">
+  <meta property="og:url" content="https://my-finances-dashboard.netlify.app/">
+  <meta property="og:site_name" content="Mes Finances · My Finances">
+  <meta property="og:title" content="Mes Finances · My Finances — suis chaque centime · track every cent">
+  <meta property="og:description" content="Budget par enveloppes pour revenus irréguliers, en plusieurs devises. Envelope budgeting for irregular income, in multiple currencies. Gratuit · Free · Hors ligne · Offline.">
+  <meta property="og:image" content="https://my-finances-dashboard.netlify.app/og-image.png">
+  <meta property="og:image:secure_url" content="https://my-finances-dashboard.netlify.app/og-image.png">
+  <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Mes Finances — Suis chaque centime, même avec des revenus irréguliers.">
+  <meta property="og:image:alt" content="Mes Finances — Suis chaque centime, même avec des revenus irréguliers. Track every cent, even with irregular income.">
   <meta property="og:locale" content="fr_FR">
   <meta property="og:locale:alternate" content="en_US">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Mes Finances — suis chaque centime">
-  <meta name="twitter:description" content="Budget par enveloppes pour revenus irréguliers, en plusieurs devises. Gratuit, hors ligne, données privées.">
-  <meta name="twitter:image" content="og-image.png">
+  <meta name="twitter:title" content="Mes Finances · My Finances — suis chaque centime · track every cent">
+  <meta name="twitter:description" content="Budget par enveloppes pour revenus irréguliers, en plusieurs devises. Envelope budgeting for irregular income, in multiple currencies. Gratuit · Free · Hors ligne · Offline.">
+  <meta name="twitter:image" content="https://my-finances-dashboard.netlify.app/og-image.png">
+  <meta name="twitter:image:alt" content="Mes Finances — Suis chaque centime, même avec des revenus irréguliers. Track every cent, even with irregular income.">
 
   <!-- Install as an app (Android, iPhone, desktop) -->
   <link rel="manifest" href="manifest.webmanifest">
@@ -49,8 +57,11 @@
     "alternateName": "My Finances",
     "applicationCategory": "FinanceApplication",
     "operatingSystem": "Web, Android, iOS, Windows, macOS",
+    "url": "https://my-finances-dashboard.netlify.app/",
+    "image": "https://my-finances-dashboard.netlify.app/og-image.png",
     "inLanguage": ["fr", "en"],
-    "description": "Budget par enveloppes pour revenus irréguliers, en plusieurs devises. Gratuit, hors ligne, données privées.",
+    "description": "Budget par enveloppes pour revenus irréguliers, en plusieurs devises. Envelope budgeting for irregular income, in multiple currencies. Gratuit, hors ligne, données privées · Free, offline, private data.",
+    "isAccessibleForFree": true,
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
     "author": { "@type": "Person", "name": "Sbit/>", "url": "https://github.com/Samuel11s" }
   }
