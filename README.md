@@ -2,6 +2,7 @@
 
 # Mes Finances
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/1cc8e8ba-8e48-4186-94b5-6aaa02436690/deploy-status)](https://app.netlify.com/projects/my-finances-dashboard/deploys)
 [![CI/CD](https://github.com/Samuel11s/mes-finances/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/Samuel11s/mes-finances/actions/workflows/ci-cd.yml)
 [![Release](https://img.shields.io/github/v/release/Samuel11s/mes-finances)](https://github.com/Samuel11s/mes-finances/releases)
 [![License](https://img.shields.io/badge/license-PolyForm%20Noncommercial-blue)](LICENSE.md)
@@ -10,6 +11,8 @@
 **Version 2.0.0** · developed by **Sbit/>**
 
 A web app to track every cent when income is irregular (Upwork freelancing, trading…), in one or several currencies. The app is available in **French and English** ("Mes Finances" / "My Finances").
+
+**👉 Live app: [my-finances-dashboard.netlify.app](https://my-finances-dashboard.netlify.app/)** — open it on your phone and choose "Add to Home Screen". Try the demo from Settings → Demo.
 
 - **No server to pay for, no database, no account**: just HTML/CSS/JS files.
 - Data stays **in the device's browser** (localStorage). With the optional sync, it also goes to **your own Google Drive**, never to a third party.
@@ -60,13 +63,9 @@ Any static hosting works. Just upload the app files (without `.github/`, `script
 
 Sharing the address is safe: every visitor gets their own empty app, in their own browser. The code contains no data and no key.
 
-### After deploying: link previews on WhatsApp / Facebook
+### Hosting your own copy: link previews on WhatsApp / Facebook
 
-Some apps (WhatsApp in particular) only show the preview image when its address is absolute. In `index.html`, replace `og-image.png` with your site's full address in `og:image` and `twitter:image`, for example:
-
-```html
-<meta property="og:image" content="https://mes-finances.netlify.app/og-image.png">
-```
+Some apps (WhatsApp in particular) only show the preview image when its address is absolute. The SEO tags in `index.html` point to `https://my-finances-dashboard.netlify.app/`; if you host your own copy, replace that address in `canonical`, `hreflang`, `og:url`, `og:image`, `twitter:image` and the JSON-LD block.
 
 ## Updating the app
 
