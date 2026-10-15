@@ -1,5 +1,5 @@
 // Service worker: lets the app work offline once installed.
-const CACHE = 'mes-finances-v5';
+const CACHE = 'mes-finances-v6';
 const ASSETS = [
   './', './index.html', './css/style.css', './manifest.webmanifest', './google-apps-script.gs',
   './js/icons.js', './js/i18n.js', './js/guide.js', './js/about.js', './js/select.js', './js/sync.js', './js/demo.js', './js/app.js',
